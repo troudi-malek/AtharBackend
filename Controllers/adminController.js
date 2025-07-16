@@ -35,25 +35,25 @@ async function GetAlluser(req,res) {
 
 async function login(req,res){
     try{
-        const {email,password,mangedMuseum}=req.body;
-        const admin=await Admin.findOne({email});
-        const museum = await Museum.findOne({mangedMuseum});
+        const {email,password}=req.body;
+        const admin=await User.findOne({email});
+        let token;
+        console.log(admin)
         if (!admin ) {
             console.log(email)
             return res.status(401).json({ error: 'Authentication failed' });
         }
-        if(admin.kind == "SuperAdmin" || admin.kind != "Admin"){
+        if(admin.kind != "SuperAdmin" && admin.kind != "Admin"){
             return res.status(401).json({ error: 'Access denied' });
-        }
-        if(!museum){
-            return res.status(401).json({ error: 'The Museum does not' });
-        }
-       
+        }    
         const passwordMatch = await bcrypt.compare(password, admin.password);
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Authentication failed' });
         }
-        const token = jwt.sign({ username: admin.username,kind:admin.kind }, process.env.ACCESS_TOKEN_SECRET);
+        if(admin.kind == "Admin"){
+            token = jwt.sign({ username: admin.username,kind:admin.kind, mangedMuseum:admin.mangedMuseum }, process.env.ACCESS_TOKEN_SECRET);
+        }else {token = jwt.sign({ username: admin.username,kind:admin.kind}, process.env.ACCESS_TOKEN_SECRET);}
+        
         res.cookie('token', token, {
             secure: true,
             sameSite: 'Strict',
