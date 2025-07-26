@@ -5,9 +5,9 @@ require('dotenv').config();
 
 async function register(req,res){
     try{
-        const {username,email,password}=req.body
+        const {username,email,password,phoneNumber}=req.body
         const hashedPassword = await bcrypt.hash(password,10);
-        const user = new User({username,email,password:hashedPassword});
+        const user = new User({username,email,password:hashedPassword,phoneNumber});
         await user.save()
         res.status(201).json({ message: 'User registered successfully',data:user});
     }catch(error){

@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 const User = require('./user');
 
 const adminSchema = new mongoose.Schema({
-    mangedMuseum:{type:mongoose.Schema.Types.ObjectId,ref:'Museum',required:true}
+    mangedMuseum:{type:mongoose.Schema.Types.ObjectId,ref:'Museum',required:true},
+    museumName:{type:String,required:false}
 },{ timestamps: true });
 
 const Admin = User.discriminator('Admin', adminSchema);

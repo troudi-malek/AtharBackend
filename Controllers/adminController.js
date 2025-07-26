@@ -9,11 +9,14 @@ async function register(req,res){
     try{
         const {username,email,password,mangedMuseum}=req.body;
         const museum = await Museum.findById(mangedMuseum);
+        console.log(username)
+        console.log(mangedMuseum);
         if(!museum){
             return res.status(401).json({ error: 'The Museum does not exist' });
         }
+        const museumName = museum.name;
         const hashedPassword = await bcrypt.hash(password,10);
-        const admin = new Admin({username,email,password:hashedPassword,mangedMuseum});
+        const admin = new Admin({username,email,password:hashedPassword,mangedMuseum,museumName});
         await admin.save();
         res.status(201).json({ message: 'Admin registered successfully',data:admin});
     }catch(error){

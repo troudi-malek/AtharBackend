@@ -2,34 +2,37 @@ const Museum = require('../Models/museum');
 
 const path = require('path');
 const fs = require('fs');
+const UserMuseumAccess = require('../Models/userMuseumAccess');
 //const Experience = require("../models/experience");
 
 async function addMuseum(req, res) {
   try {
     const { name, location, description,imageUrl } = req.body;
     const nb_ArExperience = 0;
+    const totalVisits=0;
     const imageFileName = req.file ? req.file.filename : null;
 
-    // if (!imageFileName) {
-    //   return res.status(400).json({ message: "Image is required" });
-    // }
+    if (!imageFileName) {
+      return res.status(400).json({ message: "Image is required" });
+    }
 
     // // Prepare image filename with ID placeholder
-    // const ext = path.extname(imageFileName);
+    const ext = path.extname(imageFileName);
     const tempMuseum = new Museum(); // temp instance to get ID
-    // const newFileName = `${path.basename(imageFileName, ext)}-${tempMuseum._id}${ext}`;
-    // const oldPath = path.join(__dirname, '../public/uploads', imageFileName);
-    // const newPath = path.join(__dirname, '../public/uploads', newFileName);
+    const newFileName = `${path.basename(imageFileName, ext)}-${tempMuseum._id}${ext}`;
+    const oldPath = path.join(__dirname, '../public/uploads', imageFileName);
+    const newPath = path.join(__dirname, '../public/uploads', newFileName);
 
-    //fs.renameSync(oldPath, newPath);
+    fs.renameSync(oldPath, newPath);
 
     // Create museum with finalized imageUrl
     tempMuseum.name = name;
     tempMuseum.location = location;
     tempMuseum.description = description;
     //tempMuseum.imageUrl = newFileName;
-    tempMuseum.imageUrl = imageUrl;
+    tempMuseum.imageUrl = newFileName;
     tempMuseum.nb_ArExperience = nb_ArExperience;
+    tempMuseum.totalVisits= totalVisits;
 
     await tempMuseum.save();
 
@@ -49,7 +52,6 @@ async function getAllMuseums(req, res) {
     const museums = await Museum.find();
     res.status(200).json(museums);
   } catch (error) {
-    console.log('tneket')
     res.status(500).json({
       message: "An unexpected error occurred",
       error: error.message,
@@ -117,9 +119,55 @@ async function deleteMuseum(req, res) {
   }
 }
 
+async function GetMuseumByID(req,res){
+  try{
+    const museum = await Museum.findById(req.params.id);
+    console.log(req.params.id)
+  if (!museum) {
+      return res.status(404).json({ error: "Museum not found" });
+    }
+    console.log(museum)
+
+    res.status(200).json({ message: "Museum found",data:museum });
+  }catch(error){
+    res.status(500).json({
+      message: "An unexpected error occurred",
+      error: error.message,
+    });
+  }
+}
+
+async function GetMuseumListForUser(req, res) {
+  try {
+    const userId = req.params.id; 
+
+    const museumList = await Museum.find();
+    const accessList = await UserMuseumAccess.find({ user: userId, purchased: true });
+    const ownedMuseumIds = new Set(accessList.map(a => a.museum.toString()));
+    const museumsWithOwnership = museumList.map(museum => ({
+      _id: museum._id,
+      name: museum.name,
+      location: museum.location,
+      imageUrl: museum.imageUrl,
+      nb_ArExperience: museum.nb_ArExperience,
+      owned: ownedMuseumIds.has(museum._id.toString()),
+    }));
+
+    res.json({ museums: museumsWithOwnership });
+  } catch (error) {
+    res.status(500).json({
+      message: "An unexpected error occurred",
+      error: error.message,
+    });
+  }
+}
+
+
 module.exports = {
   addMuseum,
   getAllMuseums,
   updateMuseum,
   deleteMuseum,
+  GetMuseumByID,
+  GetMuseumListForUser
 };

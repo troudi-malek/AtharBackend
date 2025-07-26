@@ -81,6 +81,8 @@ async function SubmitCode(req,res){
       return res.status(401).json({ error: 'Code is invalid' });
     }
     const userMuseumAccess = new UserMuseumAccess({user:idUser,museum:idMuseum,purchased:true});
+    CodeData.submited = true;
+    await CodeData.save();
     await userMuseumAccess.save();
     res.status(201).json({
       message: 'Code Submitted Successfully',
