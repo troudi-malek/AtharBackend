@@ -29,7 +29,7 @@ async function login(req,res){
         if (!passwordMatch) {
             return res.status(401).json({ error: 'Authentication failed' });
         }
-        res.status(200).json({ message: 'Login successful' });
+        res.status(200).json({ message: 'Login successful',userID:user._id ,username:user.username});
     }catch(error){
         console.log(error)
         res.status(500).json({ error: 'Login failed. Please try again later.' });

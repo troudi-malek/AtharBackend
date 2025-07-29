@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const museumController = require('../Controllers/museumController');
 const upload = require('../config/multer');
-const verifyToken = require('../middleware/SuperAdminMiddleware');
+const { verifyToken, authorizeRoles } = require('../middleware/Middleware');
 
-router.post('/addMuseum', upload.single('imageUrl'), verifyToken,museumController.addMuseum);
-router.get('/getMuseums', verifyToken,museumController.getAllMuseums);
-router.put('/updateMuseum/:id', verifyToken,upload.single('imageUrl'), museumController.updateMuseum);
-router.delete('/deleteMuseum/:id', verifyToken,museumController.deleteMuseum);
-router.get('/GetMuseumById/:id',verifyToken,museumController.GetMuseumByID);
-router.get('/GetMuseumListForUser/:id',museumController.GetMuseumListForUser);
+router.post('/addMuseum', upload.single('imageUrl'), verifyToken, authorizeRoles('SuperAdmin'), museumController.addMuseum);
+router.put('/updateMuseum/:id', verifyToken, authorizeRoles('SuperAdmin'), upload.single('imageUrl'), museumController.updateMuseum);
+router.delete('/deleteMuseum/:id', verifyToken, authorizeRoles('SuperAdmin'), museumController.deleteMuseum);
+router.get('/getMuseums', verifyToken, authorizeRoles('Admin', 'SuperAdmin'), museumController.getAllMuseums);
+router.get('/GetMuseumById/:id', verifyToken, authorizeRoles('Admin', 'SuperAdmin'), museumController.GetMuseumByID);
+router.get('/GetMuseumListForUser/:id', museumController.GetMuseumListForUser);
 
 module.exports = router;

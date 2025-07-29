@@ -4,14 +4,18 @@ const fs = require('fs');
 
 async function addExperience(req, res) {
   try {
-    const { idMuseum, name, description, Access_code, type } = req.body;
-
+    const { idMuseum, name, description, type } = req.body;
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+     let result = '';
+      for (let i = 0; i < 6; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
     const experience = new Experience({
-      idMuseum,
-      name,
-      description,
-      Access_code,
-      type
+      idMuseum:idMuseum,
+      name:name,
+      description:description,
+      Access_code:result,
+      type:type
     });
 
     await experience.save();
@@ -28,7 +32,14 @@ async function addExperience(req, res) {
 
 async function getAllExperiences(req, res) {
   try {
-    const experiences = await Experience.find().populate('idMuseum');
+    const { idMuseum } = req.body;
+
+    if (!idMuseum) {
+      return res.status(400).json({ message: "idMuseum is required" });
+    }
+
+    const experiences = await Experience.find({ idMuseum }).populate('idMuseum');
+
     res.status(200).json(experiences);
   } catch (error) {
     res.status(500).json({
@@ -37,6 +48,7 @@ async function getAllExperiences(req, res) {
     });
   }
 }
+
 
 async function getExperienceById(req, res) {
   try {
