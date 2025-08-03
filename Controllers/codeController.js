@@ -61,6 +61,9 @@ async function SubmitCode(req,res){
     const code= req.body.code;
     const idMuseum=req.body.idMuseum;
     const idUser=req.body.idUser;
+    console.log(code);
+    console.log(idMuseum);
+    console.log(idUser)
     const CodeData=await Code.findOne({code});
     if(!CodeData){
       return res.status(401).json({ error: 'Code is invalid' });
@@ -73,7 +76,7 @@ async function SubmitCode(req,res){
     if(!user){
       return res.status(401).json({ error: 'User not found' });
     }
-    if(code.submited == true){
+    if(CodeData.submited == true){
       return res.status(401).json({ error: 'Code is already submitted' });
     }
     

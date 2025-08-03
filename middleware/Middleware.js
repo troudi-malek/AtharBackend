@@ -16,8 +16,8 @@ function verifyToken(req, res, next) {
 
     try {
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-        req.user = decoded;      // Add full payload (e.g., id, email, kind)
-        req.kind = decoded.kind; // You were already doing this
+        req.user = decoded;  
+        req.kind = decoded.kind;
         next();
     } catch (error) {
         console.log(error);

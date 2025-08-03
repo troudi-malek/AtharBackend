@@ -31,12 +31,13 @@ const AdminRoutes=require("./routes/admin")
 const museumRoutes = require('./routes/museum');
 const superAdminRoutes = require('./routes/superAdmin');
 const codeRoutes = require('./routes/code');
-const experienceRoutes = require('./routes/experience')
+const experienceRoutes = require('./routes/experience');
+const UserMuseumAccess = require('./routes/UserMuseumAccess')
 //end Routes
 
 var app = express();
 app.use(cors({
-  origin: 'http://192.168.155.62:5000',
+  origin: 'http://localhost:5173',
   credentials: true
 }));
 const server = http.createServer(app);
@@ -57,6 +58,7 @@ app.use('/admin',AdminRoutes);
 app.use('/superAdmin',superAdminRoutes);
 app.use('/code',codeRoutes);
 app.use('/experience',experienceRoutes);
+app.use('/UserMuseumAccess',UserMuseumAccess);
 app.use(function(req, res, next) {
   next(createError(404));
 });
@@ -72,11 +74,11 @@ app.use(function(err, req, res, next) {
 });
 if (!process.env.TEST_ENV) {
   const port = process.env.PORT || 5000;
- server.listen(port, '0.0.0.0', () => {
-  console.log(`Server running on http://0.0.0.0:${port}`);
-});
-
+  server.listen(port, () => {
+      console.log(`Server running on port : ${port}`);
+  });
 }
+
 
 
 

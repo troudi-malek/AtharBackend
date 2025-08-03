@@ -140,7 +140,6 @@ async function GetMuseumByID(req,res){
 async function GetMuseumListForUser(req, res) {
   try {
     const userId = req.params.id; 
-
     const museumList = await Museum.find();
     const accessList = await UserMuseumAccess.find({ user: userId, purchased: true });
     const ownedMuseumIds = new Set(accessList.map(a => a.museum.toString()));
@@ -149,6 +148,7 @@ async function GetMuseumListForUser(req, res) {
       name: museum.name,
       location: museum.location,
       imageUrl: museum.imageUrl,
+      description : museum.description,
       nb_ArExperience: museum.nb_ArExperience,
       owned: ownedMuseumIds.has(museum._id.toString()),
     }));
@@ -163,11 +163,32 @@ async function GetMuseumListForUser(req, res) {
 }
 
 
+async function GetMuseumListForLoggedOffUser(req, res) {
+  try {
+    const museumList = await Museum.find();
+    const museumsWithOwnership = museumList.map(museum => ({
+      _id: museum._id,
+      name: museum.name,
+      location: museum.location,
+      imageUrl: museum.imageUrl,
+      nb_ArExperience: museum.nb_ArExperience,
+      owned: false,
+    }));
+
+    res.json({ museums: museumsWithOwnership });
+  } catch (error) {
+    res.status(500).json({
+      message: "An unexpected error occurred",
+      error: error.message,
+    });
+  }
+}
 module.exports = {
   addMuseum,
   getAllMuseums,
   updateMuseum,
   deleteMuseum,
   GetMuseumByID,
-  GetMuseumListForUser
+  GetMuseumListForUser,
+  GetMuseumListForLoggedOffUser
 };

@@ -7,8 +7,9 @@ const { verifyToken, authorizeRoles } = require('../middleware/Middleware');
 router.post('/addMuseum', upload.single('imageUrl'), verifyToken, authorizeRoles('SuperAdmin'), museumController.addMuseum);
 router.put('/updateMuseum/:id', verifyToken, authorizeRoles('SuperAdmin'), upload.single('imageUrl'), museumController.updateMuseum);
 router.delete('/deleteMuseum/:id', verifyToken, authorizeRoles('SuperAdmin'), museumController.deleteMuseum);
-router.get('/getMuseums', verifyToken, authorizeRoles('Admin', 'SuperAdmin'), museumController.getAllMuseums);
+router.get('/getMuseums', verifyToken, authorizeRoles('Admin', 'SuperAdmin'),museumController.getAllMuseums);
 router.get('/GetMuseumById/:id', verifyToken, authorizeRoles('Admin', 'SuperAdmin'), museumController.GetMuseumByID);
 router.get('/GetMuseumListForUser/:id', museumController.GetMuseumListForUser);
+router.get('/GetMuseumListForLoggedOffUser',museumController.GetMuseumListForLoggedOffUser)
 
 module.exports = router;
