@@ -21,6 +21,7 @@ async function GetAccessedMuseumList(req, res) {
     const experienceList = allExperiences.map(exp => ({
       id: exp._id,
       name: exp.name,
+      paid: exp.type,
       visited: visitedExperienceIds.includes(exp._id.toString())
     }));
 

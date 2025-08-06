@@ -58,7 +58,8 @@ async function login(req,res){
         }else {token = jwt.sign({ username: admin.username,kind:admin.kind}, process.env.ACCESS_TOKEN_SECRET);}
         
         res.cookie('token', token, {
-            secure: true,
+            secure: process.env.NODE_ENV === 'production',
+            httpOnly: false,
             sameSite: 'Strict',
             path:'/',
             expires: new Date(Date.now() + 24 * 60 * 60 * 1000) ,
