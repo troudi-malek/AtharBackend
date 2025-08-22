@@ -35,7 +35,43 @@ async function GetAccessedMuseumList(req, res) {
   }
 }
 
+async function GetLatestVisitedExperience(req, res) {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    const userAccesses = await UserMuseumAccess.find({ user: userId }).populate({
+      path: 'visitedExperiences.experienceId',
+      model: Experience,
+      select: 'name',
+    });
+
+    let allVisitedExperiences = [];
+    userAccesses.forEach(access => {
+      if (access.visitedExperiences && access.visitedExperiences.length > 0) {
+        allVisitedExperiences = allVisitedExperiences.concat(access.visitedExperiences);
+      }
+    });
+
+    allVisitedExperiences.sort((a, b) => b.visitedAt - a.visitedAt);
+    const experienceNames = allVisitedExperiences
+      .filter(item => item.experienceId && item.experienceId.name)
+      .map(item => item.experienceId.name);
+
+    return res.status(200).json({ experienceNames });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "An unexpected error occurred",
+      error: error.message,
+    });
+  }
+}
 
 module.exports= {
-    GetAccessedMuseumList
+    GetAccessedMuseumList,
+    GetLatestVisitedExperience
 }

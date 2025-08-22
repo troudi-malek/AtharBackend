@@ -15,17 +15,13 @@ async function addMuseum(req, res) {
     if (!imageFileName) {
       return res.status(400).json({ message: "Image is required" });
     }
-
-    // // Prepare image filename with ID placeholder
     const ext = path.extname(imageFileName);
-    const tempMuseum = new Museum(); // temp instance to get ID
+    const tempMuseum = new Museum();
     const newFileName = `${path.basename(imageFileName, ext)}-${tempMuseum._id}${ext}`;
     const oldPath = path.join(__dirname, '../public/uploads', imageFileName);
     const newPath = path.join(__dirname, '../public/uploads', newFileName);
 
     fs.renameSync(oldPath, newPath);
-
-    // Create museum with finalized imageUrl
     tempMuseum.name = name;
     tempMuseum.location = location;
     tempMuseum.description = description;
@@ -63,20 +59,15 @@ async function updateMuseum(req, res) {
   try {
     const { name, location, description } = req.body;
     const imageFile = req.file;
-
-    // Find existing museum
     const museum = await Museum.findById(req.params.id);
 
     if (!museum) {
       return res.status(404).json({ error: "Museum not found" });
     }
-
-    // Update fields
     museum.name = name || museum.name;
     museum.location = location || museum.location;
     museum.description = description || museum.description;
 
-    // Handle new image upload if provided
     if (imageFile) {
       const ext = path.extname(imageFile.filename);
       const newFileName = `${path.basename(imageFile.filename, ext)}-${museum._id}${ext}`;

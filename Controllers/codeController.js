@@ -79,10 +79,6 @@ async function SubmitCode(req,res){
     if(CodeData.submited == true){
       return res.status(401).json({ error: 'Code is already submitted' });
     }
-    
-    if(CodeData.idMuseum != idMuseum){
-      return res.status(401).json({ error: 'Code is invalid' });
-    }
     const userMuseumAccess = new UserMuseumAccess({user:idUser,museum:idMuseum,purchased:true});
     CodeData.submited = true;
     await CodeData.save();
