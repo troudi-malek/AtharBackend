@@ -5,7 +5,8 @@ const experienceSchema=new mongoose.Schema({
     name:{type:String,required:true},
     description:{type:String,required:true},
     Access_code:{type:String,required:true},
-    type: {type: String,enum: ['PREMIUM', 'FREE'],required: true}
+    ArtifactImage:{type:String,required:false},
+    points:{type:Number,required:false,default:0}
 },{ timestamps: true });
 const Experience = mongoose.model('Experience', experienceSchema);
 module.exports = Experience;

@@ -33,6 +33,8 @@ const superAdminRoutes = require('./routes/superAdmin');
 const codeRoutes = require('./routes/code');
 const experienceRoutes = require('./routes/experience');
 const UserMuseumAccess = require('./routes/UserMuseumAccess')
+const passwordResetRoutes = require('./routes/passwordReset');
+const leaderboardRoutes = require('./routes/leaderboard');
 //end Routes
 
 var app = express();
@@ -59,6 +61,8 @@ app.use('/superAdmin',superAdminRoutes);
 app.use('/code',codeRoutes);
 app.use('/experience',experienceRoutes);
 app.use('/UserMuseumAccess',UserMuseumAccess);
+app.use('/password-reset', passwordResetRoutes);
+app.use('/leaderboard', leaderboardRoutes);
 app.use(function(req, res, next) {
   next(createError(404));
 });

@@ -7,7 +7,9 @@ const museumSchema=new mongoose.Schema({
     description:{type:String,required:true},
     nb_ArExperience:{type:Number,required:false},
     totalVisits:{type:Number,required:false},
-    Phone:{type:String,required:false},
+    email:{type:String,required:false},
+    phone:{type:String,required:false},
+    cost: {type: Number, required: true}
 },{ timestamps: true });
 const Museum=mongoose.model('Museum',museumSchema);
 module.exports=Museum;

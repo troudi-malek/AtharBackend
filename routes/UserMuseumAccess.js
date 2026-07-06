@@ -4,4 +4,5 @@ const UserMuseumAccessController = require('../Controllers/UserMuseumAccessContr
 
 router.post('/GetAccessedMuseumList',UserMuseumAccessController.GetAccessedMuseumList);
 router.post('/GetLatestVisitedExperience',UserMuseumAccessController.GetLatestVisitedExperience)
+router.post('/AddVisitedExperience',UserMuseumAccessController.AddVisitedExperience)
 module.exports = router;
