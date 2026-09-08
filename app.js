@@ -10,6 +10,11 @@ require('dotenv').config();
 var indexRouter = require('./routes/index');
 
 
+var app = express();
+app.use(cors({
+  origin: 'https://athardashbaord.vercel.app',
+  credentials: true
+}));
 const mongoconnection = require("./config/mongoconnection.json");
 mongo.connect(
   mongoconnection.url, 
@@ -37,11 +42,6 @@ const passwordResetRoutes = require('./routes/passwordReset');
 const leaderboardRoutes = require('./routes/leaderboard');
 //end Routes
 
-var app = express();
-app.use(cors({
-  origin: 'https://athardashbaord.vercel.app',
-  credentials: true
-}));
 const server = http.createServer(app);
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
