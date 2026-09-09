@@ -13,11 +13,16 @@ var indexRouter = require('./routes/index');
 var app = express();
 app.use(cors({
   origin: 'https://athardashbaord.vercel.app',
+  credentials: true, methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+app.options("*", cors({
+  origin: "https://athardashbaord.vercel.app",
   credentials: true
 }));
 const mongoconnection = require("./config/mongoconnection.json");
 mongo.connect(
-  mongoconnection.url, 
+  mongoconnection.url,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
@@ -32,7 +37,7 @@ mongo.connect(
 
 //Routes
 const usersRouter = require('./routes/users');
-const AdminRoutes=require("./routes/admin")
+const AdminRoutes = require("./routes/admin")
 const museumRoutes = require('./routes/museum');
 const superAdminRoutes = require('./routes/superAdmin');
 const codeRoutes = require('./routes/code');
@@ -56,19 +61,19 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/museum', museumRoutes);
-app.use('/admin',AdminRoutes);
-app.use('/superAdmin',superAdminRoutes);
-app.use('/code',codeRoutes);
-app.use('/experience',experienceRoutes);
-app.use('/UserMuseumAccess',UserMuseumAccess);
+app.use('/admin', AdminRoutes);
+app.use('/superAdmin', superAdminRoutes);
+app.use('/code', codeRoutes);
+app.use('/experience', experienceRoutes);
+app.use('/UserMuseumAccess', UserMuseumAccess);
 app.use('/password-reset', passwordResetRoutes);
 app.use('/leaderboard', leaderboardRoutes);
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
 
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -79,7 +84,7 @@ app.use(function(err, req, res, next) {
 if (!process.env.TEST_ENV) {
   const port = process.env.PORT || 5000;
   server.listen(port, () => {
-      console.log(`Server running on port : ${port}`);
+    console.log(`Server running on port : ${port}`);
   });
 }
 
