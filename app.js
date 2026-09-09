@@ -20,9 +20,8 @@ app.options("*", cors({
   origin: "https://athardashbaord.vercel.app",
   credentials: true
 }));
-const mongoconnection = require("./config/mongoconnection.json");
 mongo.connect(
-  mongoconnection.url,
+  process.env.MONGO_URI,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
