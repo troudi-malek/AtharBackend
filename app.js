@@ -17,17 +17,21 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 console.log("MONGO_URI", process.env.MONGO_URI);
-mongo.connect(
-  process.env.MONGO_URI,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+mongo.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log("connected to database");
+    console.log("Connected to database");
+
+    if (!process.env.TEST_ENV) {
+      const port = process.env.PORT || 5000;
+
+      server.listen(port, () => {
+        console.log(`Server running on port: ${port}`);
+      });
+    }
   })
   .catch((err) => {
-    console.log(err);
+    console.error("MongoDB connection failed:", err);
+    process.exit(1);
   });
 
 
@@ -73,13 +77,6 @@ app.use(function (err, req, res, next) {
   });
 });
 
-
-if (!process.env.TEST_ENV) {
-  const port = process.env.PORT || 5000;
-  server.listen(port, () => {
-    console.log(`Server running on port : ${port}`);
-  });
-}
 
 
 
