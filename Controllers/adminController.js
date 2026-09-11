@@ -62,9 +62,9 @@ async function login(req, res) {
         const { email, password } = req.body;
         const admin = await User.findOne({ email });
         let token;
-        console.log(admin)
+        console.log("email 1: " + email)
         if (!admin) {
-            console.log(email)
+            console.log("email 2: " + email)
             return res.status(401).json({ error: 'Authentication failed' });
         }
         if (admin.kind != "SuperAdmin" && admin.kind != "Admin") {
