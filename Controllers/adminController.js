@@ -65,6 +65,7 @@ async function login(req, res) {
         console.log("email 1: " + email)
         if (!admin) {
             console.log("email 2: " + email)
+            console.log("admin: " + admin)
             return res.status(401).json({ error: 'Authentication failed' });
         }
         console.log("user type: " + admin.kind)
