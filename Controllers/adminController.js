@@ -67,8 +67,9 @@ async function login(req, res) {
             console.log("email 2: " + email)
             return res.status(401).json({ error: 'Authentication failed' });
         }
+        console.log("user type: " + admin.kind)
         if (admin.kind != "SuperAdmin" && admin.kind != "Admin") {
-            console.log("user type: " + admin.kind)
+            
             return res.status(401).json({ error: 'Access denied' });
         }
         const passwordMatch = await bcrypt.compare(password, admin.password);
