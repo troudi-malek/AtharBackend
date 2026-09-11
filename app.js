@@ -16,10 +16,7 @@ app.use(cors({
   credentials: true, methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
-app.options("*", cors({
-  origin: "https://athardashbaord.vercel.app",
-  credentials: true
-}));
+
 mongo.connect(
   process.env.MONGO_URI,
   {
