@@ -8,4 +8,7 @@ router.post('/login',adminController.login);
 router.get('/getAlluser',adminController.GetAlluser);
 router.get('/profile/:id', verifyToken, authorizeRoles('Admin','SuperAdmin'), adminController.getAdminProfile);
 router.put('/password/:id', verifyToken, authorizeRoles('Admin','SuperAdmin'), adminController.updateAdminPassword);
+router.get('/verify', verifyToken, (req, res) => {
+  res.json({ authenticated: true, user: req.user });
+});
 module.exports=router

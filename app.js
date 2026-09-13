@@ -21,7 +21,6 @@ const leaderboardRoutes = require('./routes/leaderboard');
 
 var app = express();
 
-// --- CORS (must be registered before routes) ---
 app.use(cors({
   origin: 'https://athardashbaord.vercel.app',
   credentials: true,
@@ -29,16 +28,12 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-// --- Core middleware ---
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- Cached MongoDB connection (serverless-safe) ---
-// Prevents reconnecting on every invocation and avoids the
-// "buffering timed out" error caused by querying before connect() resolves.
 let cached = global.mongooseConn;
 if (!cached) {
   cached = global.mongooseConn = { conn: null, promise: null };
@@ -58,13 +53,12 @@ async function connectDB() {
   try {
     cached.conn = await cached.promise;
   } catch (err) {
-    cached.promise = null; // allow retry on next request instead of staying broken
+    cached.promise = null; 
     throw err;
   }
   return cached.conn;
 }
 
-// Ensure DB is connected before any route handler runs
 app.use(async (req, res, next) => {
   try {
     await connectDB();
