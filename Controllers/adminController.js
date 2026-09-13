@@ -62,40 +62,68 @@ async function login(req, res) {
         const { email, password } = req.body;
         const admin = await User.findOne({ email });
         let token;
-        console.log("email 1: " + email)
+ 
         if (!admin) {
-            console.log("email 2: " + email)
-            console.log("admin: " + admin)
             return res.status(401).json({ error: 'Authentication failed' });
         }
-        console.log("user type: " + admin.kind)
+ 
         if (admin.kind != "SuperAdmin" && admin.kind != "Admin") {
-            
             return res.status(401).json({ error: 'Access denied' });
         }
+ 
         const passwordMatch = await bcrypt.compare(password, admin.password);
         if (!passwordMatch) {
-            console.log(password)
             return res.status(401).json({ error: 'Authentication failed' });
         }
+ 
         if (admin.kind == "Admin") {
-            token = jwt.sign({ id: admin._id, username: admin.username, kind: admin.kind, mangedMuseum: admin.mangedMuseum }, process.env.ACCESS_TOKEN_SECRET);
+            token = jwt.sign(
+                { id: admin._id, username: admin.username, kind: admin.kind, mangedMuseum: admin.mangedMuseum },
+                process.env.ACCESS_TOKEN_SECRET
+            );
         } else {
-            token = jwt.sign({ id: admin._id, username: admin.username, kind: admin.kind }, process.env.ACCESS_TOKEN_SECRET);
+            token = jwt.sign(
+                { id: admin._id, username: admin.username, kind: admin.kind },
+                process.env.ACCESS_TOKEN_SECRET
+            );
         }
-
+ 
+        // httpOnly must stay true — this is correct and secure.
+        // The frontend can never read this cookie directly (different subdomain),
+        // and doesn't need to: it calls /admin/me instead. See that route below.
         res.cookie('token', token, {
             secure: true,
-            httpOnly: false,
+            httpOnly: true,
             sameSite: 'none',
             path: '/',
             maxAge: 24 * 60 * 60 * 1000
         });
-        res.status(200).json({ message: 'Login successful', data: token });
+ 
+        res.status(200).json({
+            message: 'Login successful',
+            user: {
+                id: admin._id,
+                username: admin.username,
+                kind: admin.kind,
+                museumId: admin.mangedMuseum || null
+            }
+        });
     } catch (error) {
-        console.log(error)
+        console.error(error);
         res.status(500).json({ error: 'Login failed. Please try again later.' });
     }
+}
+ 
+// GET /admin/me — lets the frontend ask "who am I" using the httpOnly cookie,
+// since it can never read that cookie's contents itself.
+async function me(req, res) {
+    // req.user was attached by authMiddleware after verifying the cookie
+    res.status(200).json({
+        id: req.user.id,
+        username: req.user.username,
+        kind: req.user.kind,
+        museumId: req.user.mangedMuseum || null
+    });
 }
 
 async function getAdminProfile(req, res) {
@@ -171,5 +199,6 @@ module.exports = {
     GetAlluser,
     login,
     getAdminProfile,
-    updateAdminPassword
+    updateAdminPassword,
+    me
 }

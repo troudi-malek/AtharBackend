@@ -11,4 +11,5 @@ router.put('/password/:id', verifyToken, authorizeRoles('Admin','SuperAdmin'), a
 router.get('/verify', verifyToken, (req, res) => {
   res.json({ authenticated: true, user: req.user });
 });
+router.get('/me', verifyToken, authorizeRoles('Admin','SuperAdmin'), adminController.me);
 module.exports=router
