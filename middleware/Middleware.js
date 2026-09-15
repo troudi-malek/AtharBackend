@@ -4,11 +4,11 @@ require('dotenv').config();
 function verifyToken(req, res, next) {
     const bearerHeader = req.header('Authorization');
 
-    if (!bearerHeader) {
-        return res.status(401).json({ error: 'Access denied. No token provided.' });
-    }
-
-    const token = bearerHeader.split(' ')[1];
+    const token = bearerHeader
+        ? bearerHeader.startsWith('Bearer ')
+            ? bearerHeader.slice(7)
+            : null
+        : req.cookies?.token;
 
     if (!token) {
         return res.status(401).json({ error: 'Access denied. Token missing.' });
