@@ -22,7 +22,7 @@ const leaderboardRoutes = require('./routes/leaderboard');
 var app = express();
 
 app.use(cors({
-  origin: 'https://athardashbaord.vercel.app',
+  origin: 'http://localhost:5173',
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]

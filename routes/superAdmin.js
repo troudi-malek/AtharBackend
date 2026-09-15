@@ -6,4 +6,5 @@ const { verifyToken, authorizeRoles } = require('../middleware/Middleware');
 router.post('/SignUp',superAdminController.register);
 router.post('/login',superAdminController.login);
 router.get('/getAllusers',verifyToken,authorizeRoles('SuperAdmin'),superAdminController.GetAllUser);
+router.get('/me', verifyToken, authorizeRoles('SuperAdmin'), superAdminController.me);
 module.exports=router;
